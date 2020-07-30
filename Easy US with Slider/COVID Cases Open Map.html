@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<p style="font-size:50px;">A chronology of the COVID-19 pandemic in the United States</p>
+	<p style="font-size:14px;"><i>To navigate this story please choose the metric on the top and use the slider at the bottom of the page</i></p>
+	
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<style type="text/css">
+
+/* On mouse hover, lighten state color */
+path:hover {
+	fill-opacity: .7;
+}
+
+/* Style for Custom Tooltip */
+div.tooltip {   
+ 	position: absolute;           
+	text-align: center;           
+	width: 100px;                  
+	height: 40px;                 
+	padding: 2px;             
+	font: 12px sans-serif;        
+	background: white;   
+	border: 0px;      
+	border-radius: 8px;           
+	pointer-events: none;         
+}
+        
+/* Legend Position Style and Font Type / Size */
+.legend {
+	position:absolute;
+	left:650px;
+	top:500px;
+	font: 14px sans-serif;
+}
+
+.slidecontainer {
+	width: 100%;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+.slider {
+  width: 50%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 2;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+body {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	margin-right: 20px;
+	margin-left: 20px;
+}
+
+</style>
+</head>
+<body>
+    <form>
+        <select name="measure" id="measure">
+            <option value="1"># of Cases</option>
+            <option value="2"># of Deaths</option>
+        </select>
+    </form>
+<div class="container-fluid">
+	<div class="row">
+	  <div class="col-xl" id="column_1">
+	  </div>
+	  <div class="col-lg" id = "column_2">
+		<p id="explanation">
+		</p>
+	  </div>
+	</div>
+</div>
+<footer>
+	<div class="slidecontainer">
+		<input type="range" min="1" max="7" value="1" class="slider" id="myRange">
+		<p>Time Period: <span id="slider"></span> 2020</p>
+	</div>
+</footer>
+
+<script type="text/javascript">
+//Width and height of map
+var width = 960;
+var height = 500;
+
+// This is the code that manages the slider
+var slider = document.getElementById("myRange");
+var output = document.getElementById("slider");
+var dict_months_slider = {
+	1: "January",
+	2: "February",
+	3: "March",
+	4: "April",
+	5: "May",
+	6: "June",
+	7: "July"
+};
+slider.value = 1;
+slider.title = dict_months_slider[slider.value]+" 2020";
+output.innerHTML = dict_months_slider[slider.value];
+slider.innerHTML = dict_months_slider[slider.value]+" 2020";
+/*
+const x = d3.scaleLinear()
+    .domain([0, 180])
+    .range([0, width])
+    .clamp(true);
+
+slider.insert("g")
+    .attr("class", "ticks")
+    .attr("transform", "translate(0," + 18 + ")")
+  	.selectAll("text")
+  	.data(x.ticks(10))
+  	.enter().append("text")
+    .attr("x", x)
+    .attr("text-anchor", "middle")
+    .text(d => d + "°");
+
+output.innerHTML = dict_months_slider[slider.value];
+*/	
+slider.oninput = function() {
+	  output.innerHTML = dict_months_slider[this.value];
+	  //console.log("los valores:"+slider.value+" "+select.value);
+	  slider.title = dict_months_slider[slider.value];
+	  output.innerHTML = dict_months_slider[slider.value];
+	  slider.innerHTML = dict_months_slider[slider.value];
+	  update(slider.value,select.value);
+}
+
+//This is the code that manages the combo-box
+
+var select = d3.select("#measure");
+select.value = "1";
+
+select.on("change", function() {
+    console.log(this.value);
+	console.log(slider.value);
+	select.value = this.value;
+    update(slider.value,select.value);
+});
+
+
+
+// D3 Projection
+var projection = d3.geo.albersUsa()
+				   .translate([width/2.5, height/2])    // translate to center of screen
+				   .scale([850]);          // scale things down so see entire US
+        
+// Define path generator
+var path = d3.geo.path()               // path generator that will convert GeoJSON to SVG paths
+		  	 .projection(projection);  // tell path generator to use albersUsa projection
+
+//Create SVG element and append map to the SVG
+var svg = d3.select("#column_1")
+			.append("svg")
+        	.attr("id", "chart")
+        	.attr("width", width)
+        	.attr("height", height)
+        	.append("g")
+
+// Append Div for tooltip to SVG
+var div = d3.select("#column_1")
+		    .append("div")   
+    		.attr("class", "tooltip")               
+    		.style("opacity", 0);
+	
+// Define scale for output
+var color = d3.scale.quantile()
+					.range(["rgb(237, 248, 233)", "rgb(211, 233, 212)", "rgb(185,218,191)", "rgb(159,203,170)", "rgb(133,188,149)","rgb(107,173,128)","rgb(81,158,107)","rgb(55,142,86)","rgb(29,126,65)","rgb(0,109,44)"]);
+
+var color_deaths = d3.scale.quantile()
+					.range(["rgb(247,189,192)","rgb(244,172,173)","rgb(241,154,154)","rgb(238,136,135)","rgb(235,118,116)","rgb(232,100,97)","rgb(229,82,78)","rgb(226,64,59)","rgb(223, 46, 40)","rgb(220, 28, 19)"]);
+
+var legendText = ["Maximum", "Minimum","No Cases Reported"];
+
+var dict_months = {
+	1: "January 2020",
+	2: "February 2020",
+	3: "March 2020",
+	4: "April 2020",
+	5: "May 2020",
+	6: "June 2020",
+	7: "July 2020"
+}
+
+
+function update(month,chosen_metric){
+	d3.select("svg").remove();
+	
+	//Can't tell why I need to remove this twice, but is the only way it works
+	d3.select("svg").remove();
+
+	var t = d3.transition().duration(1500);
+
+	var path = d3.geo.path()           
+		  	 .projection(projection);
+
+	var svg = d3.select("#column_1")
+			.append("svg")
+        	.attr("width", width)
+        	.attr("height", height)
+        	.append("g");
+
+	if(chosen_metric=="1"){
+		svg.append("text")
+        	.attr("x", width/2.5)             
+        	.attr("y", height/35)
+        	.attr("text-anchor", "middle")  
+        	.style("font-size", "16px") 
+        	.style("text-decoration", "underline")
+        	.text("# Cases by State for the month of "+dict_months[month]);
+	}
+	else{
+		svg.append("text")
+        	.attr("x", width/2.5)             
+        	.attr("y", height/35)
+        	.attr("text-anchor", "middle")  
+        	.style("font-size", "16px") 
+        	.style("text-decoration", "underline")
+        	.text("# Deaths by State for the month of "+dict_months[month]);		
+	}
+
+
+	d3.csv("Covid-Cases-Deaths-Monthly-"+month+".csv", function(data) {
+		if(chosen_metric==1){
+			color.domain([d3.min(data, function(d){ return parseFloat(d.Cases); }),d3.max(data, function(d){ return parseFloat(d.Cases); })]);
+		} else {
+			color_deaths.domain([d3.min(data, function(d){ return parseFloat(d.Deaths); }),d3.max(data, function(d){ return parseFloat(d.Deaths); })]);
+		}
+		
+		// Load GeoJSON data and merge with states data
+		d3.json("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json", function(json) {
+
+			//This is the text that is going into the right. Extract it from the file and put in the right pane.
+			var dataExplanation = data[0].Explanation;
+			document.getElementById("explanation").innerHTML = dataExplanation;
+
+			// Loop through each state data value in the .csv file
+			for (var i = 0; i < data.length; i++) {
+				
+				// Grab State Name
+				var dataState = data[i].State;
+				
+				// Grab data value 
+				var dataValue = parseFloat(data[i].Cases);
+				var dataDeath = parseFloat(data[i].Deaths);
+				
+				// Find the corresponding state inside the GeoJSON
+				for (var j = 0; j < json.features.length; j++)  {
+					var jsonState = json.features[j].properties.name;
+					if (dataState == jsonState) {
+						// Copy the data value into the JSON
+						json.features[j].properties.Cases = dataValue; 
+						json.features[j].properties.Deaths = dataDeath;
+						json.features[j].properties.State = dataState;
+						// Stop looking through the JSON
+						break;
+					}
+				}
+			}
+			// Bind the data to the SVG and create one path per GeoJSON feature
+			svg.selectAll("path")
+				.data(json.features)
+				.enter()
+				.append("path")
+				.attr("d", path)
+				.style("stroke", "#000")
+				.style("stroke-width", "1")
+				.style("fill", function(d) {
+
+				// Get data value
+				var value = d.properties.Cases;
+				var deaths = d.properties.Deaths;
+				var state = d.properties.State;
+
+				if(chosen_metric==1){
+					if (value) {
+						//If value exists…
+						return color(value);
+					} 
+					else {
+						return "#ccc"
+					}
+				} else {
+					if (deaths) {
+						return color_deaths(deaths);
+					}
+					else {
+						return "#ccc"
+					}
+				}
+				})
+
+				.on("mouseover", function(d) {      
+    				div.transition()        
+      	   				.duration(200)      
+           				.style("opacity", .9);
+						if(d.properties.Cases==null){
+							div.text(0)
+           						.style("left", (d3.event.pageX) + "px")     
+           						.style("top", (d3.event.pageY-200) + "px");
+						} else {
+							if(chosen_metric==1){
+           						div.text("State: "+d.properties.State+"\n Cases: "+d.properties.Cases)
+           							.style("left", (d3.event.pageX-20) + "px")     
+           							.style("top", (d3.event.pageY-200) + "px");
+							}
+							else {
+								div.text("State: "+d.properties.State+"\n Deaths: "+d.properties.Deaths)
+           							.style("left", (d3.event.pageX) + "px")     
+           							.style("top", (d3.event.pageY -200) + "px");	
+							}
+						}
+					})
+
+    			// fade out tooltip on mouse out               
+    			.on("mouseout", function(d) {       
+        			div.transition()        
+           				.duration(500)      
+           				.style("opacity", 0);   
+    				})
+				});
+
+				var legend = d3.select("body").append("svg")
+      					.attr("class", "legend")
+     					.attr("width", 140)
+    					.attr("height", 200)
+   						.selectAll("g")
+   						.data(color.domain().slice().reverse())
+   						.enter()
+   						.append("g")
+     					.attr("transform", function(d, i) { return "translate(0," + i * 25 + ")"; });
+
+  				legend.append("rect")
+   			  		.attr("width", 18)
+   			  		.attr("height", 18)
+   			  		.style("fill", color);
+
+  				legend.append("text")
+  			  		.data(legendText)
+      		  		.attr("x", 24)
+    	  	  		.attr("y", 9)
+    	  	  		.attr("dy", ".35em")
+    	  	  		.text(function(d) { return d; });
+	});
+}
+
+update(1,1);
+
+svg.append("text")
+        .attr("x", width/2.5)             
+        .attr("y", height/10)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("# Cases by State for the month of "+slider.value);
+//The below are libraries that need to be imported so that Bootstrap (for rendering purposes) works... I am not using these for anything else (as you can tell anywhere based on the code)
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+</body>
+</html>
