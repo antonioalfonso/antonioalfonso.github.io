@@ -1,13 +1,416 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>D3 Hello World</title>
-    <script src="http://d3js.org/d3.v3.min.js"></script>
-  </head>
-  <body>
-    <script type="text/javascript">
-      d3.select("body").append("p").text("Hello World");
-    </script>
-  </body>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<p style="font-size:50px;">___Chronology of Corona Virus in the United States</p>
+	<p style="font-size:14px;">  To navigate, choose the metric on the top and use the slide on the bottom</p>
+	
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<style type="text/css">
+
+/* On mouse hover, lighten state color */
+path:hover {
+	fill-opacity: .7;
+}
+
+/* Style for Custom Tooltip */
+div.tooltip {   
+ 	position: absolute;           
+	text-align: center;           
+	width: 80px;                  
+	height: 30px;                 
+	padding: 2px;             
+	font: 12px sans-serif;        
+	background: white;   
+	border: 0px;      
+	border-radius: 8px;           
+	pointer-events: none;         
+}
+
+
+        
+/* Legend Position Style and Font Type / Size */
+.legend {
+	position:absolute;
+	left:650px;
+	top:450px;
+	font: 14px sans-serif;
+}
+
+.slidecontainer {
+	width: 40%;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 2;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+    <form>
+        <select name="year" id="year">
+            <option value="1"># of Cases</option>
+            <option value="2"># of Deaths</option>
+        </select>
+    </form>
+<div class="container-fluid">
+	<div class="row">
+	  <div class="col-xl" id="column_1">
+	  </div>
+	  <div class="col-lg" id = "column_2">
+		<p id="explanation">
+		</p>
+	  </div>
+	</div>
+</div>
+<footer>
+	<div class="slidecontainer">
+		<input type="range" min="1" max="7" value="1" class="slider" id="myRange">
+		<p><span id="slider"></span></p>
+	</div>
+</footer>
+<script>
+	var slider = document.getElementById("myRange");
+	var output = document.getElementById("slider");
+	var dict_months_slider = {
+	1: "January",
+	2: "February",
+	3: "March",
+	4: "April",
+	5: "May",
+	6: "June",
+	7: "July"
+	}
+	output.innerHTML = dict_months_slider[slider.value];
+	
+	slider.oninput = function() {
+	  output.innerHTML = dict_months_slider[this.value];
+	  update(slider.value,path)
+	}
+</script>
+
+<script type="text/javascript">
+		
+//Width and height of map
+var width = 960;
+var height = 500;
+
+// D3 Projection
+var projection = d3.geo.albersUsa()
+				   .translate([width/2.5, height/2])    // translate to center of screen
+				   .scale([850]);          // scale things down so see entire US
+        
+// Define path generator
+var path = d3.geo.path()               // path generator that will convert GeoJSON to SVG paths
+		  	 .projection(projection);  // tell path generator to use albersUsa projection
+
+//Create SVG element and append map to the SVG
+var svg = d3.select("#column_1")
+			.append("svg")
+        	.attr("id", "chart")
+        	.attr("width", width)
+        	.attr("height", height)
+        	.append("g")
+
+// Append Div for tooltip to SVG
+var div = d3.select("#column_1")
+		    .append("div")   
+    		.attr("class", "tooltip")               
+    		.style("opacity", 0);
+	
+// Define scale for output
+var color = d3.scale.quantile()
+					.range(["rgb(237, 248, 233)", "rgb(211, 233, 212)", "rgb(185,218,191)", "rgb(159,203,170)", "rgb(133,188,149)","rgb(107,173,128)","rgb(81,158,107)","rgb(55,142,86)","rgb(29,126,65)","rgb(0,109,44)"]);
+
+
+var legendText = ["Maximum", "Minimum","No Cases Reported"];
+
+var dict_months = {
+	1: "January 2020",
+	2: "February 2020",
+	3: "March 2020",
+	4: "April 2020",
+	5: "May 2020",
+	6: "June 2020",
+	7: "July 2020"
+}
+
+
+function update(month){
+	d3.select("svg").remove();
+	
+	//Can't tell why I need to remove this twice, but is the only way it works
+	d3.select("svg").remove();
+
+	
+	
+	var t = d3.transition().duration(1500);
+
+	var path = d3.geo.path()           
+		  	 .projection(projection);
+
+	var svg = d3.select("#column_1")
+			.append("svg")
+        	.attr("width", width)
+        	.attr("height", height)
+        	.append("g");
+	
+	svg.append("text")
+        .attr("x", width/2.5)             
+        .attr("y", height/35)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")
+        .text("# Cases by State for the month of "+dict_months[month]);
+
+
+	d3.csv("Covid-Cases-Deaths-Monthly-"+month+".csv", function(data) {
+		color.domain([d3.min(data, function(d){ return parseFloat(d.Cases); }),d3.max(data, function(d){ return parseFloat(d.Cases); })]);
+		
+		// Load GeoJSON data and merge with states data
+		d3.json("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json", function(json) {
+			var dataExplanation = data[0].Explanation;
+			document.getElementById("explanation").innerHTML = dataExplanation;
+			// Loop through each state data value in the .csv file
+			for (var i = 0; i < data.length; i++) {
+				
+				// Grab State Name
+				var dataState = data[i].State;
+				
+				// Grab data value 
+				var dataValue = parseFloat(data[i].Cases);
+				var dataDeath = parseFloat(data[i].Deaths);
+				
+				// Find the corresponding state inside the GeoJSON
+				for (var j = 0; j < json.features.length; j++)  {
+					var jsonState = json.features[j].properties.name;
+					if (dataState == jsonState) {
+						// Copy the data value into the JSON
+						json.features[j].properties.Cases = dataValue; 
+						json.features[j].properties.Deaths = dataDeath;
+						json.features[j].properties.State = dataState;
+						// Stop looking through the JSON
+						break;
+					}
+				}
+			}
+			// Bind the data to the SVG and create one path per GeoJSON feature
+			svg.selectAll("path")
+				.data(json.features)
+				.enter()
+				.append("path")
+				.attr("d", path)
+				.style("stroke", "#000")
+				.style("stroke-width", "1")
+				.style("fill", function(d) {
+
+				// Get data value
+				var value = d.properties.Cases;
+				var deaths = d.properties.Deaths;
+				var state = d.properties.State;
+
+				if (value) {
+					//If value exists…
+					return color(value);
+				} 
+				else {
+						return "#ccc"
+					}
+				})
+
+				.on("mouseover", function(d) {      
+    				div.transition()        
+      	   				.duration(200)      
+           				.style("opacity", .9);
+						if(d.properties.Cases==null){
+							div.text(0)
+           						.style("left", (d3.event.pageX) + "px")     
+           						.style("top", (d3.event.pageY - 28) + "px");
+						} else {   
+           					div.text(d.properties.State+": "+d.properties.Cases)
+           						.style("left", (d3.event.pageX) + "px")     
+           						.style("top", (d3.event.pageY - 28) + "px");
+						}
+					})
+
+    			// fade out tooltip on mouse out               
+    			.on("mouseout", function(d) {       
+        			div.transition()        
+           				.duration(500)      
+           				.style("opacity", 0);   
+    				})
+				});
+
+				var legend = d3.select("body").append("svg")
+      					.attr("class", "legend")
+     					.attr("width", 140)
+    					.attr("height", 200)
+   						.selectAll("g")
+   						.data(color.domain().slice().reverse())
+   						.enter()
+   						.append("g")
+     					.attr("transform", function(d, i) { return "translate(0," + i * 25 + ")"; });
+
+  				legend.append("rect")
+   			  		.attr("width", 18)
+   			  		.attr("height", 18)
+   			  		.style("fill", color);
+
+  				legend.append("text")
+  			  		.data(legendText)
+      		  		.attr("x", 24)
+    	  	  		.attr("y", 9)
+    	  	  		.attr("dy", ".35em")
+    	  	  		.text(function(d) { return d; });
+	});
+}
+	
+
+/*
+// Load in my states data!
+d3.csv("Covid-Cases-Deaths-Monthly-1.csv", function(data) {
+	color.domain([d3.min(data, function(d){ return parseFloat(d.Cases); }),d3.max(data, function(d){ return parseFloat(d.Cases); })]);
+
+	// Load GeoJSON data and merge with states data
+	d3.json("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json", function(json) {
+		// Loop through each state data value in the .csv file
+		for (var i = 0; i < data.length; i++) {
+			// Grab State Name
+			var dataState = data[i].State;
+			// Grab data value 
+			var dataValue = parseFloat(data[i].Cases);
+			var dataDeath = parseFloat(data[i].Deaths);
+
+			// Find the corresponding state inside the GeoJSON
+			for (var j = 0; j < json.features.length; j++)  {
+				var jsonState = json.features[j].properties.name;
+				if (dataState == jsonState) {
+					// Copy the data value into the JSON
+					json.features[j].properties.Cases = dataValue;
+					json.features[j].properties.Deaths = dataDeath;
+					json.features[j].properties.State = dataState; 
+					// Stop looking through the JSON
+					break;
+				}
+			}
+		}
+		// Bind the data to the SVG and create one path per GeoJSON feature
+		svg.selectAll("path")
+			.data(json.features)
+			.enter()
+			.append("path")
+			.attr("d", path)
+			.style("stroke", "#000")
+			.style("stroke-width", "1")
+			.style("fill", function(d) {
+				// Get data value
+				var value = d.properties.Cases;
+				var deaths = d.properties.Deaths;
+				var state = d.properties.State;
+				if (value) {
+					//If value exists…
+					return color(value);
+				} 
+				else {
+						//If value is undefined…
+						//return "rgb(213,222,217)";
+						return "#ccc"
+					}
+			})
+
+			.on("mouseover", function(d) {      
+    			div.transition()        
+      	   			.duration(200)      
+           			.style("opacity", .9);
+				if(d.properties.Cases==null){
+					div.text(0)
+           			.style("left", (d3.event.pageX) + "px")     
+           			.style("top", (d3.event.pageY - 28) + "px");
+				} else {   
+           		div.text(d.properties.State+": "+d.properties.Cases)
+           			.style("left", (d3.event.pageX) + "px")     
+           			.style("top", (d3.event.pageY - 28) + "px");
+				}
+			})
+
+    		// fade out tooltip on mouse out               
+    		.on("mouseout", function(d) {       
+        		div.transition()        
+           		.duration(500)      
+           		.style("opacity", 0);   
+    		});
+		});
+
+ 
+        
+// Modified Legend Code from Mike Bostock: http://bl.ocks.org/mbostock/3888852
+	var legend = d3.select("body").append("svg")
+      				.attr("class", "legend")
+     				.attr("width", 140)
+    				.attr("height", 200)
+   					.selectAll("g")
+   					.data(color.domain().slice().reverse())
+   					.enter()
+   					.append("g")
+     				.attr("transform", function(d, i) { return "translate(0," + i * 25 + ")"; });
+
+  		legend.append("rect")
+   			  .attr("width", 18)
+   			  .attr("height", 18)
+   			  .style("fill", color);
+
+  		legend.append("text")
+  			  .data(legendText)
+      		  .attr("x", 24)
+    	  	  .attr("y", 9)
+    	  	  .attr("dy", ".35em")
+    	  	  .text(function(d) { return d; });
+});
+*/
+
+update(1);
+svg.append("text")
+        .attr("x", width/2.5)             
+        .attr("y", height/10)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("# Cases by State for the month of "+slider.value);
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+</body>
 </html>
