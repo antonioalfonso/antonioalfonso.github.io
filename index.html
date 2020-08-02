@@ -3,7 +3,7 @@
 <head>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<p style="font-size:50px;">A chronology of the COVID-19 pandemic in the United States</p>
-	<p style="font-size:14px;"><i>To navigate this story please choose the metric on the top and use the slider at the bottom of the page</i></p>
+	<p style="font-size:14px;"><i>To navigate this story please choose the metric on the top of the map and use the slider at the bottom of it. Do not forget to hover over the map to check for more details!</i></p>
 	
 <meta charset="utf-8">
 <script src="https://d3js.org/d3.v3.min.js"></script>
@@ -43,7 +43,7 @@ div.tooltip {
 }
 
 .slider {
-  width: 50%;
+  width: 40%;
   height: 25px;
   background: #d3d3d3;
   outline: none;
@@ -61,14 +61,14 @@ div.tooltip {
   appearance: none;
   width: 25px;
   height: 25px;
-  background: #4CAF50;
+  background: #404040;
   cursor: pointer;
 }
 
 .slider::-moz-range-thumb {
   width: 25px;
   height: 25px;
-  background: #4CAF50;
+  background: #404040;
   cursor: pointer;
 }
 
@@ -122,42 +122,27 @@ var dict_months_slider = {
 	6: "June",
 	7: "July"
 };
+
 slider.value = 1;
 slider.title = dict_months_slider[slider.value]+" 2020";
 output.innerHTML = dict_months_slider[slider.value];
 slider.innerHTML = dict_months_slider[slider.value]+" 2020";
-/*
-const x = d3.scaleLinear()
-    .domain([0, 180])
-    .range([0, width])
-    .clamp(true);
 
-slider.insert("g")
-    .attr("class", "ticks")
-    .attr("transform", "translate(0," + 18 + ")")
-  	.selectAll("text")
-  	.data(x.ticks(10))
-  	.enter().append("text")
-    .attr("x", x)
-    .attr("text-anchor", "middle")
-    .text(d => d + "°");
-
-output.innerHTML = dict_months_slider[slider.value];
-*/	
+//Manages the trigger of movement on the slider to call the update function 
+// and perform updates on the values of the slider itself
 slider.oninput = function() {
 	  output.innerHTML = dict_months_slider[this.value];
-	  //console.log("los valores:"+slider.value+" "+select.value);
 	  slider.title = dict_months_slider[slider.value];
 	  output.innerHTML = dict_months_slider[slider.value];
 	  slider.innerHTML = dict_months_slider[slider.value];
 	  update(slider.value,select.value);
 }
 
-//This is the code that manages the combo-box
-
+//This is the code that manages the combo-box on the top with number of cases and number of deaths
 var select = d3.select("#measure");
 select.value = "1";
 
+//Manage the trigger of changing the value in the combo-box
 select.on("change", function() {
     console.log(this.value);
 	console.log(slider.value);
@@ -216,7 +201,7 @@ function update(month,chosen_metric){
 	//Can't tell why I need to remove this twice, but is the only way it works
 	d3.select("svg").remove();
 
-	var t = d3.transition().duration(1500);
+	//Trying to do nice transitions but failing miserably var t = d3.transition().duration(1500);
 
 	var path = d3.geo.path()           
 		  	 .projection(projection);
@@ -227,14 +212,14 @@ function update(month,chosen_metric){
         	.attr("height", height)
         	.append("g");
 
-	if(chosen_metric=="1"){
+	if(chosen_metric==1){
 		svg.append("text")
         	.attr("x", width/2.5)             
         	.attr("y", height/35)
         	.attr("text-anchor", "middle")  
         	.style("font-size", "16px") 
         	.style("text-decoration", "underline")
-        	.text("# Cases by State for the month of "+dict_months[month]);
+        	.text("# Cases by State for the month end of "+dict_months[month]);
 	}
 	else{
 		svg.append("text")
@@ -243,21 +228,28 @@ function update(month,chosen_metric){
         	.attr("text-anchor", "middle")  
         	.style("font-size", "16px") 
         	.style("text-decoration", "underline")
-        	.text("# Deaths by State for the month of "+dict_months[month]);		
+        	.text("# Deaths by State for the month end of "+dict_months[month]);		
 	}
 
 
 	d3.csv("Covid-Cases-Deaths-Monthly-"+month+".csv", function(data) {
+
 		if(chosen_metric==1){
+			var minimo=d3.min(data, function(d){ return parseFloat(d.Cases); });
+			var maximo=d3.max(data, function(d){ return parseFloat(d.Cases); });
 			color.domain([d3.min(data, function(d){ return parseFloat(d.Cases); }),d3.max(data, function(d){ return parseFloat(d.Cases); })]);
-		} else {
+		} 
+		
+		else {
+			var minimo=d3.min(data, function(d){ return parseFloat(d.Deaths); });
+			var maximo=d3.max(data, function(d){ return parseFloat(d.Deaths); });
 			color_deaths.domain([d3.min(data, function(d){ return parseFloat(d.Deaths); }),d3.max(data, function(d){ return parseFloat(d.Deaths); })]);
 		}
 		
 		// Load GeoJSON data and merge with states data
 		d3.json("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json", function(json) {
 
-			//This is the text that is going into the right. Extract it from the file and put in the right pane.
+			//This is the text that is going into the right pane. Extract it from the file and put in the right pane.
 			var dataExplanation = data[0].Explanation;
 			document.getElementById("explanation").innerHTML = dataExplanation;
 
@@ -273,17 +265,21 @@ function update(month,chosen_metric){
 				
 				// Find the corresponding state inside the GeoJSON
 				for (var j = 0; j < json.features.length; j++)  {
+
 					var jsonState = json.features[j].properties.name;
 					if (dataState == jsonState) {
+
 						// Copy the data value into the JSON
 						json.features[j].properties.Cases = dataValue; 
 						json.features[j].properties.Deaths = dataDeath;
 						json.features[j].properties.State = dataState;
+
 						// Stop looking through the JSON
 						break;
 					}
 				}
 			}
+
 			// Bind the data to the SVG and create one path per GeoJSON feature
 			svg.selectAll("path")
 				.data(json.features)
@@ -321,17 +317,25 @@ function update(month,chosen_metric){
     				div.transition()        
       	   				.duration(200)      
            				.style("opacity", .9);
-						if(d.properties.Cases==null){
-							div.text(0)
-           						.style("left", (d3.event.pageX) + "px")     
-           						.style("top", (d3.event.pageY-200) + "px");
-						} else {
-							if(chosen_metric==1){
+						if(chosen_metric==1){
+							if(isNaN(d.properties.Cases)){
+								div.text("State: "+d.properties.State+"\n Cases: 0")
+           							.style("left", (d3.event.pageX-20) + "px")     
+           							.style("top", (d3.event.pageY-200) + "px");
+							}
+							else{
            						div.text("State: "+d.properties.State+"\n Cases: "+d.properties.Cases)
            							.style("left", (d3.event.pageX-20) + "px")     
            							.style("top", (d3.event.pageY-200) + "px");
 							}
-							else {
+						}
+						else {
+							if(isNaN(d.properties.Deaths)){
+								div.text("State: "+d.properties.State+"\n Deaths: 0")
+           							.style("left", (d3.event.pageX) + "px")     
+           							.style("top", (d3.event.pageY -200) + "px");
+							}
+							else{
 								div.text("State: "+d.properties.State+"\n Deaths: "+d.properties.Deaths)
            							.style("left", (d3.event.pageX) + "px")     
            							.style("top", (d3.event.pageY -200) + "px");	
@@ -345,30 +349,280 @@ function update(month,chosen_metric){
            				.duration(500)      
            				.style("opacity", 0);   
     				})
-				});
 
-				var legend = d3.select("body").append("svg")
+				
+				//Here I am putting the different annotations depending on the state where we are
+				//Put a note on WA reporting first death in this state
+				if(slider.value==1 && chosen_metric==1){
+					svg.append('line')
+					.style("stroke", "black")
+					.style("stroke-width", 2)
+					.attr("x1", 50)
+					.attr("y1", 50)
+					.attr("x2", 120)
+					.attr("y2", 80);
+
+					svg.append("text")
+        				.attr("x", 20)             
+        				.attr("y",40)
+        				.attr("text-anchor", "large")  
+        				.style("font-size", "12px") 
+        				.text("WA reports the first COVID case in the U.S.");
+				}
+
+				//Here making an annotation for the first death reported in the U.S. (California)
+				if(slider.value==2 && chosen_metric!=1){
+					svg.append('line')
+					.style("stroke", "black")
+					.style("stroke-width", 2)
+					.attr("x1", 20)
+					.attr("y1", 300)
+					.attr("x2", 100)
+					.attr("y2", 220);
+
+					svg.append("text")
+        				.attr("x",0)             
+        				.attr("y",310)
+        				.attr("text-anchor", "large")  
+        				.style("font-size", "12px") 
+        				.text("CA reports first death")
+						.append("tspan")
+						.attr("x", 0)
+  						.attr("dy", 15)
+						.text("from COVID in the USA");
+				}
+
+				//Another annotation, giving emphasis to NY as the epicenter of the pandemic by end of March 2020
+				if(slider.value==3 && chosen_metric==1){
+					svg.append("circle")
+                	.attr("cx", 610)
+                	.attr("cy", 170)
+                	.attr("r", 45)
+                	.style("stroke", "black")
+					.style("stroke-width",3)
+					.style("fill","none");
+
+					svg.append('line')
+						.style("stroke", "black")
+						.style("stroke-width", 2)
+						.attr("x1", 550)
+						.attr("y1", 100)
+						.attr("x2", 580)
+						.attr("y2", 138);
+
+					svg.append("text")
+        				.attr("x",500)             
+        				.attr("y",80)
+        				.attr("text-anchor", "large")  
+        				.style("font-size", "12px") 
+        				.text("NY is the epicenter")
+						.append("tspan")
+						.attr("x", 500)
+  						.attr("dy", 15)
+						.text("of the COVID pandemic");
+
+				}
+				
+				//Another anotation, similar to the one from NY but extending to the U.S. East Coast
+				if(slider.value==4 && chosen_metric==1){
+					svg.append("circle")
+                	.attr("cx", 620)
+                	.attr("cy", 170)
+                	.attr("r", 55)
+                	.style("stroke", "black")
+					.style("stroke-width",3)
+					.style("fill","none");
+
+					svg.append('line')
+						.style("stroke", "black")
+						.style("stroke-width", 2)
+						.attr("x1", 550)
+						.attr("y1", 100)
+						.attr("x2", 580)
+						.attr("y2", 135);
+
+					svg.append("text")
+        				.attr("x",500)             
+        				.attr("y",60)
+        				.attr("text-anchor", "large")  
+        				.style("font-size", "12px") 
+        				.text("The U.S. East Coast")
+						.append("tspan")
+						.attr("x", 500)
+  						.attr("dy", 15)
+						.text("becomes the epicenter")
+						.append("tspan")
+						.attr("x", 500)
+  						.attr("dy", 15)
+						.text("of the COVID pandemic");					
+				}
+
+				//Another annotation, showing that the focus of infections is moving now to the South-West region
+				if(slider.value==6 && chosen_metric==1){
+
+					//line to CA
+					svg.append('line')
+						.style("stroke", "black")
+						.style("stroke-width", 2)
+						.attr("x1", 390)
+						.attr("y1", 460)
+						.attr("x2", 140)
+						.attr("y2", 300);
+
+					//line to TX
+					svg.append('line')
+						.style("stroke", "black")
+						.style("stroke-width", 2)
+						.attr("x1", 370)
+						.attr("y1", 380)
+						.attr("x2", 425)
+						.attr("y2", 430);
+
+					//line to FL
+					svg.append('line')
+						.style("stroke", "black")
+						.style("stroke-width", 2)
+						.attr("x1", 580)
+						.attr("y1", 380)
+						.attr("x2", 475)
+						.attr("y2", 430);
+					
+					svg.append("text")
+        				.attr("x",400)             
+        				.attr("y",440)
+        				.attr("text-anchor", "large")  
+        				.style("font-size", "12px") 
+        				.text("The pandemic's hotspot")
+						.append("tspan")
+						.attr("x", 400)
+  						.attr("dy", 15)
+						.text("moves towards the South")
+						.append("tspan")
+						.attr("x", 400)
+  						.attr("dy", 15)
+						.text("and West to FL, TX and CA");					
+				}
+
+				//Same annotation as in end of June, but with different message
+				if(slider.value==7 && chosen_metric==1){
+
+				//line to CA
+				svg.append('line')
+					.style("stroke", "black")
+					.style("stroke-width", 2)
+					.attr("x1", 390)
+					.attr("y1", 460)
+					.attr("x2", 140)
+					.attr("y2", 300);
+				//line to TX
+				svg.append('line')
+					.style("stroke", "black")
+					.style("stroke-width", 2)
+					.attr("x1", 370)
+					.attr("y1", 380)
+					.attr("x2", 425)
+					.attr("y2", 430);
+
+				//line to FL
+				svg.append('line')
+					.style("stroke", "black")
+					.style("stroke-width", 2)
+					.attr("x1", 580)
+					.attr("y1", 380)
+					.attr("x2", 475)
+					.attr("y2", 430);
+
+				svg.append("text")
+					.attr("x",400)             
+					.attr("y",440)
+					.attr("text-anchor", "large")  
+					.style("font-size", "12px") 
+					.text("CA is now the state with most")
+					.append("tspan")
+					.attr("x", 400)
+	  				.attr("dy", 15)
+					.text("reported cases with over 500,000,")
+					.append("tspan")
+					.attr("x", 400)
+	  				.attr("dy", 15)
+					.text("followed by FL and TX");					
+				}
+
+				//Setting the legend depending on which measure you are showing, and which state you are
+				if(chosen_metric==1){
+					console.log(color.domain().slice().reverse());
+					var legend = d3.select("body").append("svg")
       					.attr("class", "legend")
      					.attr("width", 140)
     					.attr("height", 200)
    						.selectAll("g")
    						.data(color.domain().slice().reverse())
-   						.enter()
+						.enter()
    						.append("g")
      					.attr("transform", function(d, i) { return "translate(0," + i * 25 + ")"; });
+					
+						 
+					legend.append("rect")
+						.attr("width", 18)
+						.attr("height", 18)
+						.style("fill", color);
+						
+					legend.append("text")
+						.data(legendText)
+      		  			.attr("x", 24)
+    	  	  			.attr("y", 9)
+    	  	  			.attr("dy", ".35em")
+    	  	  			.text(function(d) { return d; });
+				}
+				else{
+					if(slider.value==1){
+						var legend = d3.select("body").append("svg")
+      						.attr("class", "legend")
+     						.attr("width", 140)
+    						.attr("height", 200);
 
-  				legend.append("rect")
-   			  		.attr("width", 18)
-   			  		.attr("height", 18)
-   			  		.style("fill", color);
+						legend.append("rect")
+							.attr("width", 18)
+							.attr("height", 18)
+							.style("fill", "#ccc");
+						
+						legend.append("text")
+							.attr("x", 24)
+    	  	  				.attr("y", 9)
+    	  	  				.attr("dy", ".35em")
+    	  	  				.text("No deaths");
+					}
+					else{
+						var legend = d3.select("body").append("svg")
+      						.attr("class", "legend")
+     						.attr("width", 140)
+    						.attr("height", 200)
+   							.selectAll("g")
+   							.data(color_deaths.domain().slice().reverse())
+   							.enter()
+   							.append("g")
+     						.attr("transform", function(d, i) { return "translate(0," + i * 25 + ")"; });
+						 
+						legend.append("rect")
+							.attr("width", 18)
+							.attr("height", 18)
+							.style("fill", color_deaths);
+						
+						legend.append("text")
+							.data(legendText)
+      		  				.attr("x", 24)
+    	  	  				.attr("y", 9)
+    	  	  				.attr("dy", ".35em")
+    	  	  				.text(function(d) { return d; });
+					}
+					
 
-  				legend.append("text")
-  			  		.data(legendText)
-      		  		.attr("x", 24)
-    	  	  		.attr("y", 9)
-    	  	  		.attr("dy", ".35em")
-    	  	  		.text(function(d) { return d; });
-	});
+					
+
+				}
+			});
+
+		});
 }
 
 update(1,1);
