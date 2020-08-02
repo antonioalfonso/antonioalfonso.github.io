@@ -1,0 +1,50 @@
+state,visited
+Alaska,1
+Alabama,0.5
+Arkansas,0.68525
+Arizona,0.69235
+California,0.89895
+Colorado,0.51625
+Connecticut,0.66045
+Delaware,0.6
+Florida,0.9
+Georgia,0.69455
+Iowa,2
+Idaho,0.71425
+Illinois,0.76485
+Indiana,0.711
+Kansas,0.5062
+Kentucky,0.47015
+Louisiana,0.4952
+Maine,0.69385
+Maryland,0.62285
+Massachusetts,0.5729
+Michigan,0.5529
+Minnesota,0.61795
+Missouri,0.5106
+Mississippi,0.5653
+Montana,0.40725
+North Carolina,0.6777
+North Dakota,0.5139
+Nebraska,0.58095
+New Hampshire,0.5102
+New Jersey,0.64155
+New Mexico,0.44625
+Nevada,1.5
+New York,0.56635
+Ohio,0.60375
+Oklahoma,0.38465
+Oregon,0.6577
+Pennsylvania,0.53005
+Rhode Island,0.7096
+South Carolina,0.56235
+South Dakota,0.538
+Tennessee,0.3824
+Texas,0.44365
+Utah,0.4819
+Virginia,0.483
+Vermont,1.1
+Washington,0.57285
+Wisconsin,0.5565
+West Virginia,0.28885
+Wyoming,0.2856

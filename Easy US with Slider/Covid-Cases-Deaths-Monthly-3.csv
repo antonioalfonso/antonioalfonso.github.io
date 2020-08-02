@@ -1,10 +1,10 @@
 ﻿Date,State,Cases,Deaths,Month,Year,Total Daily Cases US,Total Daily Deaths US,RatioCases,RatioDeaths,Explanation
-4/1/2020,Alabama,1108,28,4,2020,215391,5325,0.005144133,0.005258216,"<p>Summary of key takeaways for this month:</p><ol>
-<li>The rest of all the states and territories report their first cases during this month.</li>
+4/1/2020,Alabama,1108,28,4,2020,215391,5325,0.005144133,0.005258216,"<p>Key takeaways for this month:</p>
+<ol>
+<li>The rest of the states and territories that did not have any cases now report their first ones during this month.</li>
+<li>New York becomes the epicenter of the pandemic in the U.S. reporting both the most cases and deaths to date.</li>
 <li>As of March 31, the CDC reported there were 5,325 deaths, 215,391 confirmed cases, and more than one million tests completed in the U.S.</li>
 <li>Several experts estimated that between 500,000 and ""millions"" of tests per day were necessary.</li>
-
-
 <li>There are many challenges to ramping up capacity: ""Complaints vary, but labs say they don't have enough swabs, test kits, reagents, personal protective equipment (PPE), staff, or machines to run the specific tests required.""</li>
 </ol>"
 4/1/2020,Alaska,143,2,4,2020,215391,5325,0.000663909,0.000375587,
@@ -17,7 +17,6 @@
 4/1/2020,District of Columbia,586,11,4,2020,215391,5325,0.002720634,0.002065728,
 4/1/2020,Florida,7769,100,4,2020,215391,5325,0.036069288,0.018779343,
 4/1/2020,Georgia,4747,154,4,2020,215391,5325,0.02203899,0.028920188,
-4/1/2020,Guam,147,3,4,2020,215391,5325,0.00068248,0.00056338,
 4/1/2020,Hawaii,258,1,4,2020,215391,5325,0.001197822,0.000187793,
 4/1/2020,Idaho,669,9,4,2020,215391,5325,0.003105979,0.001690141,
 4/1/2020,Illinois,6978,146,4,2020,215391,5325,0.032396897,0.02741784,
@@ -42,12 +41,10 @@
 4/1/2020,New York,84364,2415,4,2020,215391,5325,0.39167839,0.453521127,
 4/1/2020,North Carolina,1591,11,4,2020,215391,5325,0.007386567,0.002065728,
 4/1/2020,North Dakota,147,3,4,2020,215391,5325,0.00068248,0.00056338,
-4/1/2020,Northern Mariana Islands,6,1,4,2020,215391,5325,2.79E-05,0.000187793,
 4/1/2020,Ohio,2548,65,4,2020,215391,5325,0.011829649,0.012206573,
 4/1/2020,Oklahoma,719,30,4,2020,215391,5325,0.003338115,0.005633803,
 4/1/2020,Oregon,737,19,4,2020,215391,5325,0.003421684,0.003568075,
 4/1/2020,Pennsylvania,5805,78,4,2020,215391,5325,0.026950987,0.014647887,
-4/1/2020,Puerto Rico,286,11,4,2020,215391,5325,0.001327818,0.002065728,
 4/1/2020,Rhode Island,566,10,4,2020,215391,5325,0.002627779,0.001877934,
 4/1/2020,South Carolina,1293,26,4,2020,215391,5325,0.006003036,0.004882629,
 4/1/2020,South Dakota,129,1,4,2020,215391,5325,0.000598911,0.000187793,
@@ -55,9 +52,8 @@
 4/1/2020,Texas,4402,65,4,2020,215391,5325,0.020437251,0.012206573,
 4/1/2020,Utah,1012,7,4,2020,215391,5325,0.004698432,0.001314554,
 4/1/2020,Vermont,321,16,4,2020,215391,5325,0.001490313,0.003004695,
-4/1/2020,Virgin Islands,30,0,4,2020,215391,5325,0.000139282,0,
 4/1/2020,Virginia,1511,18,4,2020,215391,5325,0.007015149,0.003380282,
 4/1/2020,Washington,5589,250,4,2020,215391,5325,0.025948159,0.046948357,
 4/1/2020,West Virginia,191,2,4,2020,215391,5325,0.000886759,0.000375587,
 4/1/2020,Wisconsin,1552,33,4,2020,215391,5325,0.007205501,0.006197183,
-4/1/2020,Wyoming,138,0,4,2020,215391,5325,0.000640695,0,
+4/1/2020,Wyoming,138,NA,4,2020,215391,5325,0.000640695,0,

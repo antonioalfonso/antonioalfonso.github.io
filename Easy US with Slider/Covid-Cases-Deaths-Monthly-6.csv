@@ -1,9 +1,10 @@
 ﻿Date,State,Cases,Deaths,Month,Year,Total Daily Cases US,Total Daily Deaths US,RatioCases,RatioDeaths,Explanation
-7/1/2020,Alabama,38962,972,7,2020,2703296,128104,0.014412776,0.007587585,"<p>Summary of key takeaways for this month:</p>
+7/1/2020,Alabama,38962,972,7,2020,2703296,128104,0.014412776,0.007587585,"<p>Key takeaways for this month:</p>
 <ol>
-<li>Indicators used to monitor COVID-19 activity remain lower than peaks seen in March and April; however, there are increases in the percentage of new cases which have been sustained in some parts of the country for multiple consecutive weeks.</li>
-<li>The main source of new infections moves to the south (Arizona, Florida, Georgia, Tennessee, Texas), and California.</li>
-<li>Number of daily deaths continues to decline, however, showing that the mortality rate is decreasing and aligning witht the expectated rate as per WHO guidelines.</li>
+<li>Indicators used to monitor COVID-19 activity remain lower at a national level in comparison to the peaks observed for the months of March and April. Notwithstanding this, there are sustained increases in the percentage of new cases in specific parts of the country for multiple consecutive weeks.</li>
+<li>The main source of new infections moves to the South, Southwest, and West regions: Arizona, Florida, Georgia, Tennessee, Texas, and California.</li>
+<li>Number of daily deaths continues to decline, however, showing that the mortality rate is decreasing and aligning itself with the expected rate as per WHO guidelines.</li>
+<li>The U.S. ends this month with 2,703,296 total reported cases and 128,104 reported deaths since the beginning of the pandemic.</li>
 </ol>"
 7/1/2020,Alaska,1174,12,7,2020,2703296,128104,0.000434285,9.37E-05,
 7/1/2020,Arizona,84152,1726,7,2020,2703296,128104,0.031129406,0.013473428,
@@ -15,7 +16,6 @@
 7/1/2020,District of Columbia,10365,553,7,2020,2703296,128104,0.003834208,0.004316805,
 7/1/2020,Florida,158989,3549,7,2020,2703296,128104,0.058813019,0.027704053,
 7/1/2020,Georgia,79589,2779,7,2020,2703296,128104,0.029441467,0.021693312,
-7/1/2020,Guam,1240,6,7,2020,2703296,128104,0.000458699,4.68E-05,
 7/1/2020,Hawaii,909,18,7,2020,2703296,128104,0.000336256,0.000140511,
 7/1/2020,Idaho,6379,92,7,2020,2703296,128104,0.002359712,0.000718166,
 7/1/2020,Illinois,145541,7160,7,2020,2703296,128104,0.053838351,0.055892088,
@@ -40,12 +40,10 @@
 7/1/2020,New York,398770,31791,7,2020,2703296,128104,0.147512518,0.248165553,
 7/1/2020,North Carolina,66815,1389,7,2020,2703296,128104,0.024716124,0.010842753,
 7/1/2020,North Dakota,3624,89,7,2020,2703296,128104,0.001340586,0.000694748,
-7/1/2020,Northern Mariana Islands,30,2,7,2020,2703296,128104,1.11E-05,1.56E-05,
 7/1/2020,Ohio,52865,2876,7,2020,2703296,128104,0.019555757,0.022450509,
 7/1/2020,Oklahoma,14112,389,7,2020,2703296,128104,0.005220294,0.003036595,
 7/1/2020,Oregon,9019,211,7,2020,2703296,128104,0.003336298,0.001647099,
 7/1/2020,Pennsylvania,91864,6704,7,2020,2703296,128104,0.03398222,0.05233248,
-7/1/2020,Puerto Rico,7537,153,7,2020,2703296,128104,0.002788078,0.001194342,
 7/1/2020,Rhode Island,16853,956,7,2020,2703296,128104,0.006234241,0.007462687,
 7/1/2020,South Carolina,37919,766,7,2020,2703296,128104,0.014026951,0.005979517,
 7/1/2020,South Dakota,6826,93,7,2020,2703296,128104,0.002525066,0.000725973,
@@ -53,7 +51,6 @@
 7/1/2020,Texas,174826,2518,7,2020,2703296,128104,0.064671423,0.019655905,
 7/1/2020,Utah,22864,173,7,2020,2703296,128104,0.008457823,0.001350465,
 7/1/2020,Vermont,1210,56,7,2020,2703296,128104,0.000447602,0.000437145,
-7/1/2020,Virgin Islands,92,6,7,2020,2703296,128104,3.40E-05,4.68E-05,
 7/1/2020,Virginia,63203,1786,7,2020,2703296,128104,0.023379978,0.013941797,
 7/1/2020,Washington,35258,1340,7,2020,2703296,128104,0.013042597,0.010460251,
 7/1/2020,West Virginia,2979,93,7,2020,2703296,128104,0.001101988,0.000725973,
