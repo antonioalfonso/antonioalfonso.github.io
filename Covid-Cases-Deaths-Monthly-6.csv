@@ -1,5 +1,5 @@
 ﻿Date,State,Cases,Deaths,Month,Year,Total Daily Cases US,Total Daily Deaths US,RatioCases,RatioDeaths,Explanation
-7/1/2020,Alabama,38962,972,7,2020,2703296,128104,0.014412776,0.007587585,"<p>Key takeaways for this month:</p>
+7/1/2020,Alabama,38962,972,7,2020,2703296,128104,0.014412776,0.007587585,"<p><span style=""text-decoration: underline;""><strong>Key takeaways for this month:</strong></span></p>
 <ol>
 <li>Indicators used to monitor COVID-19 activity remain lower at a national level in comparison to the peaks observed for the months of March and April. Notwithstanding this, there are sustained increases in the percentage of new cases in specific parts of the country for multiple consecutive weeks.</li>
 <li>The main source of new infections moves to the South, Southwest, and West regions: Arizona, Florida, Georgia, Tennessee, Texas, and California.</li>
@@ -9,8 +9,8 @@
 7/1/2020,Alaska,1174,12,7,2020,2703296,128104,0.000434285,9.37E-05,
 7/1/2020,Arizona,84152,1726,7,2020,2703296,128104,0.031129406,0.013473428,
 7/1/2020,Arkansas,21197,277,7,2020,2703296,128104,0.007841169,0.002162306,
-7/1/2020,California,239764,6168,7,2020,2703296,128104,0.08869321,0.048148379,
-7/1/2020,Colorado,33012,1697,7,2020,2703296,128104,0.012211759,0.013247049,
+7/1/2020,California,238764,6168,7,2020,2703296,128104,0.08869321,0.048148379,
+7/1/2020,Colorado,32012,1697,7,2020,2703296,128104,0.012211759,0.013247049,
 7/1/2020,Connecticut,46572,4324,7,2020,2703296,128104,0.017227858,0.033753825,
 7/1/2020,Delaware,11510,509,7,2020,2703296,128104,0.004257765,0.003973334,
 7/1/2020,District of Columbia,10365,553,7,2020,2703296,128104,0.003834208,0.004316805,

@@ -3,7 +3,7 @@
 <head>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<p style="font-size:50px;">A chronology of the COVID-19 pandemic in the United States</p>
-	<p style="font-size:14px;"><i>To navigate this story please choose the metric you want to check on the top of the map and use the slider at the bottom of it to see the progression of events over time. Do not forget to hover over the map to check for more details!</i></p>
+	<p style="font-size:14px;"><i>To navigate this story please choose the metric you want to check on the top of the map and use the time slider at the bottom</i></p>
 	
 <meta charset="utf-8">
 <script src="https://d3js.org/d3.v3.min.js"></script>
@@ -43,7 +43,7 @@ div.tooltip {
 }
 
 .slider {
-  width: 40%;
+  width: 45%;
   height: 25px;
   background: #d3d3d3;
   outline: none;
@@ -182,10 +182,13 @@ var div = d3.select("#column_1")
 	
 // Define scale for output
 var color = d3.scale.quantile()
-					.range(["rgb(237, 248, 233)", "rgb(211, 233, 212)", "rgb(185,218,191)", "rgb(159,203,170)", "rgb(133,188,149)","rgb(107,173,128)","rgb(81,158,107)","rgb(55,142,86)","rgb(29,126,65)","rgb(0,109,44)"]);
+					.range(["rgb(225, 245, 254)", "rgb(179, 229, 252)", "rgb(129,212,250)", "rgb(79,195,247)", "rgb(41,182,246)","rgb(3,169,244)","rgb(199.6,97.4,45.5)","rgb(2,136,209)","rgb(2,119,189)","rgb(1,87,155)"]);
 
+//var color_deaths = d3.scale.quantile()
+//					.range(["rgb(247,189,192)","rgb(244,172,173)","rgb(241,154,154)","rgb(238,136,135)","rgb(235,118,116)","rgb(232,100,97)","rgb(229,82,78)","rgb(226,64,59)","rgb(223, 46, 40)","rgb(220, 28, 19)"]);
 var color_deaths = d3.scale.quantile()
-					.range(["rgb(247,189,192)","rgb(244,172,173)","rgb(241,154,154)","rgb(238,136,135)","rgb(235,118,116)","rgb(232,100,97)","rgb(229,82,78)","rgb(226,64,59)","rgb(223, 46, 40)","rgb(220, 28, 19)"]);
+					.range(["#ecd1f3","#f3e5f6","#dfbbe9","#d2a5df","#c58fd5","#b879ca","#aa64c0","#9c4db6","#8e35ab","#7f15a1"]);
+
 
 var legendText = ["Maximum", "Minimum","No Cases Reported"];
 
@@ -224,6 +227,7 @@ function update(month,chosen_metric){
         	.attr("text-anchor", "middle")  
         	.style("font-size", "16px") 
         	.style("text-decoration", "underline")
+			.style("font-weight","bold")
         	.text("# Cases by State for the month end of "+dict_months[month]);
 	}
 	else{
@@ -233,6 +237,7 @@ function update(month,chosen_metric){
         	.attr("text-anchor", "middle")  
         	.style("font-size", "16px") 
         	.style("text-decoration", "underline")
+			.style("font-weight","bold")
         	.text("# Deaths by State for the month end of "+dict_months[month]);		
 	}
 
@@ -444,7 +449,7 @@ function update(month,chosen_metric){
 						.attr("x1", 550)
 						.attr("y1", 100)
 						.attr("x2", 580)
-						.attr("y2", 135);
+						.attr("y2", 133);
 
 					svg.append("text")
         				.attr("x",500)             
@@ -558,8 +563,8 @@ function update(month,chosen_metric){
 					console.log(color.domain().slice().reverse());
 					var legend = d3.select("body").append("svg")
       					.attr("class", "legend")
-     					.attr("width", 140)
-    					.attr("height", 200)
+     					.attr("width", 100)
+    					.attr("height", 50)
    						.selectAll("g")
    						.data(color.domain().slice().reverse())
 						.enter()
@@ -570,7 +575,8 @@ function update(month,chosen_metric){
 					legend.append("rect")
 						.attr("width", 18)
 						.attr("height", 18)
-						.style("fill", color);
+						.style("fill", color)
+						.style("stroke","black");
 						
 					legend.append("text")
 						.data(legendText)
@@ -589,6 +595,7 @@ function update(month,chosen_metric){
 						legend.append("rect")
 							.attr("width", 18)
 							.attr("height", 18)
+							.style("stroke","black")
 							.style("fill", "#ccc");
 						
 						legend.append("text")
@@ -611,6 +618,7 @@ function update(month,chosen_metric){
 						legend.append("rect")
 							.attr("width", 18)
 							.attr("height", 18)
+							.style("stroke","black")
 							.style("fill", color_deaths);
 						
 						legend.append("text")
